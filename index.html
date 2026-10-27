@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas Web 1 - Gabungan Webcam Toy, Wattpad, & Open Library</title> 
+    <link rel="stylesheet" href="style.css">       
+</head>
+<body>
+
+    <!-- ================= BAGIAN 1: HEADER (Webcam Toy) ================= -->
+    <header>
+        <div class="logo">📷 Webcam Toy</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Effects</a></li>
+                <li><a href="#">Photos</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ================= BAGIAN 2: CONTENT (Wattpad) ================= -->
+    <main>
+        <section class="wattpad-hero">
+            <h2>Temukan & Baca Cerita Terbaik Hari Ini</h2>
+            <p>Jelajahi jutaan kisah menarik dari para penulis di seluruh dunia.</p>
+        </section>
+
+        <h3 class="section-title">Cerita Trending</h3>
+        <!-- Kartu dibuat otomatis dari data buku di bagian <script> -->
+        <section class="story-grid" id="storyGrid"></section>
+    </main>
+
+    <!-- ================= PEMBACA BUKU ================= -->
+    <div class="reader-overlay" id="readerOverlay" aria-hidden="true">
+        <div class="reader" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+            <div class="reader-head" id="readerHead">
+                <div class="mini-cover" id="readerCover"></div>
+                <div class="titles">
+                    <h3 id="readerTitle"></h3>
+                    <p id="readerAuthor"></p>
+                </div>
+                <button class="reader-close" id="readerClose" aria-label="Tutup buku">&times;</button>
+            </div>
+            <div class="reader-body" id="readerBody"></div>
+            <div class="reader-foot">
+                <button class="reader-btn" id="prevBtn">Sebelumnya</button>
+                <span class="page-info" id="pageInfo"></span>
+                <button class="reader-btn" id="nextBtn">Berikutnya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= BAGIAN 3: FOOTER (Open Library) ================= -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Open Library</h4>
+                <ul>
+                    <li><a href="#">Vision</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Discover</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Books</a></li>
+                    <li><a href="#">Authors</a></li>
+                    <li><a href="#">Subjects</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Develop</h4>
+                <ul>
+                    <li><a href="#">Developer Center</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">Bulk Data Dumps</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Help</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Report a Problem</a></li>
+                    <li><a href="#">Suggesting Edits</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Open Library is an initiative of the Internet Archive. Tugas Web 1 - Arvianita Juliani &copy; 2026.</p>
+        </div>
+    </footer>
+
+    <script>
+        /* ===== DATA BUKU =====
+           Ganti judul, penulis, sinopsis, dan isi bab sesuai kebutuhan.
+           Setiap bab = satu "halaman" di pembaca. */
+        const books = [
+            {
+                title: "Petualangan di Ruang Hampa",
+                author: "@Arvianita",
+                color: "#4a90e2",
+                synopsis: "Seorang teknisi stasiun luar angkasa terjebak sendirian setelah sinyal ke Bumi terputus.",
+                chapters: [
+                    {
+                        name: "Bab 1: Sinyal yang Hilang",
+                        text: [
+                            "Alarm di Stasiun Kirana berbunyi pukul tiga pagi waktu stasiun. Raya terbangun dan melayang ke panel komunikasi. Layar yang biasanya penuh garis hijau kini kosong.",
+                            "\"Bumi, ini Kirana. Apakah kalian mendengar?\" Hanya desis statis yang menjawab. Ia mengulanginya sepuluh kali, lalu berhenti dan menatap jendela kecil di depannya."
+                        ]
+                    },
+                    {
+                        name: "Bab 2: Sendirian",
+                        text: [
+                            "Persediaan oksigen cukup untuk empat puluh hari. Raya menulis angka itu di dinding dengan spidol, lalu menambahkan satu kalimat di bawahnya: cari tahu kenapa.",
+                            "Ia mulai memeriksa antena satu per satu. Di antena ketiga, ia menemukan sesuatu yang bukan bagian dari stasiun."
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "Misteri Perpustakaan Tua",
+                author: "@via",
+                color: "#e91e63",
+                synopsis: "Sebuah buku kosong muncul di rak yang sama setiap malam, dan setiap pagi halamannya bertambah tulisan.",
+                chapters: [
+                    {
+                        name: "Bab 1: Buku di Rak Paling Atas",
+                        text: [
+                            "Perpustakaan Desa Mekar sudah berdiri sejak sebelum Nadia lahir. Ia dipercaya menjaganya sepulang sekolah, dan sejauh ini tidak ada yang aneh sampai Selasa itu.",
+                            "Di rak paling atas, terselip sebuah buku bersampul kulit tanpa judul. Halamannya kosong, kecuali satu baris tulisan tangan: \"Kamu terlambat tiga hari.\""
+                        ]
+                    },
+                    {
+                        name: "Bab 2: Tulisan yang Bertambah",
+                        text: [
+                            "Keesokan harinya, buku itu sudah ada di tempatnya lagi. Kali ini ada satu paragraf baru, dan paragraf itu menyebut nama Nadia.",
+                            "Ia menutup buku itu perlahan dan memutuskan untuk bertanya pada satu-satunya orang yang pernah menjaga perpustakaan sebelum dirinya: Kakek Harun."
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "Langkah Di Balik Awan",
+                author: "@vio",
+                color: "#2ecc71",
+                synopsis: "Pendakian pertama seorang anak desa ke puncak gunung yang selalu tertutup awan.",
+                chapters: [
+                    {
+                        name: "Bab 1: Kaki Gunung",
+                        text: [
+                            "Bima berdiri di pos terakhir dengan ransel yang terasa dua kali lebih berat dari kemarin. Di atasnya, puncak Gunung Sanggar tidak pernah terlihat. Awan selalu menutupinya.",
+                            "\"Orang bilang di atas sana tidak ada apa-apa,\" kata pemandu. Bima tersenyum. \"Justru itu yang mau saya lihat.\""
+                        ]
+                    },
+                    {
+                        name: "Bab 2: Menembus Kabut",
+                        text: [
+                            "Setelah tiga jam mendaki, dunia berubah putih. Suara langkah terdengar teredam, dan jarak pandang tinggal beberapa meter.",
+                            "Lalu, tanpa peringatan, kabut terbelah. Di bawah kakinya terbentang lautan awan yang bergerak pelan seperti napas."
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "Kisah Kamera Ajaib",
+                author: "@WebCamStory",
+                color: "#9b59b6",
+                synopsis: "Sebuah webcam tua menampilkan foto-foto dari masa depan, dan satu foto menunjukkan kejadian yang belum terjadi.",
+                chapters: [
+                    {
+                        name: "Bab 1: Webcam dari Pasar Loak",
+                        text: [
+                            "Dimas membeli webcam itu seharga lima ribu rupiah. Kabelnya kusut dan lensanya berdebu, tetapi lampu kecilnya menyala begitu dicolok ke laptop.",
+                            "Saat ia membuka aplikasi kamera, layar menampilkan kamarnya sendiri. Hanya saja, di dinding ada kalender tahun depan."
+                        ]
+                    },
+                    {
+                        name: "Bab 2: Foto yang Belum Terjadi",
+                        text: [
+                            "Setiap malam, webcam itu menyimpan satu foto otomatis. Foto pertama: Dimas tertawa bersama teman-temannya di taman. Foto kedua: lapangan sekolah yang basah oleh hujan.",
+                            "Foto ketiga membuatnya terdiam. Di foto itu, ada seseorang berdiri di belakangnya, dan Dimas yakin ia tinggal sendirian di rumah."
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const grid = document.getElementById('storyGrid');
+        const overlay = document.getElementById('readerOverlay');
+        const body = document.getElementById('readerBody');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        let current = null;
+        let page = 0;
+        let lastFocused = null;
+
+        // Buat kartu untuk setiap buku
+        books.forEach((book, i) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'story-card';
+            card.setAttribute('aria-label', 'Buka buku ' + book.title);
+            card.innerHTML =
+                '<div class="story-cover" style="background-color:' + book.color + '; color:white;">Cover Buku ' + (i + 1) + '</div>' +
+                '<div class="story-info">' +
+                    '<div class="story-title"></div>' +
+                    '<div class="story-author"></div>' +
+                    '<span class="story-open">Baca sekarang</span>' +
+                '</div>';
+            card.querySelector('.story-title').textContent = book.title;
+            card.querySelector('.story-author').textContent = 'Oleh ' + book.author;
+            card.addEventListener('click', () => openBook(i));
+            grid.appendChild(card);
+        });
+
+        function renderPage() {
+            const ch = current.chapters[page];
+            body.innerHTML = '';
+
+            if (page === 0) {
+                const syn = document.createElement('p');
+                syn.className = 'synopsis';
+                syn.textContent = current.synopsis;
+                body.appendChild(syn);
+            }
+
+            const h = document.createElement('h4');
+            h.textContent = ch.name;
+            body.appendChild(h);
+
+            ch.text.forEach(t => {
+                const p = document.createElement('p');
+                p.className = 'text';
+                p.textContent = t;
+                body.appendChild(p);
+            });
+
+            body.scrollTop = 0;
+            pageInfo.textContent = 'Bab ' + (page + 1) + ' dari ' + current.chapters.length;
+            prevBtn.disabled = page === 0;
+            nextBtn.disabled = page === current.chapters.length - 1;
+        }
+
+        function openBook(index) {
+            current = books[index];
+            page = 0;
+            lastFocused = document.activeElement;
+
+            document.getElementById('readerHead').style.backgroundColor = current.color;
+            document.getElementById('readerCover').textContent = 'Buku ' + (index + 1);
+            document.getElementById('readerTitle').textContent = current.title;
+            document.getElementById('readerAuthor').textContent = 'Oleh ' + current.author;
+
+            renderPage();
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+            document.getElementById('readerClose').focus();
+        }
+
+        function closeBook() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+            if (lastFocused) lastFocused.focus();
+        }
+
+        prevBtn.addEventListener('click', () => { if (page > 0) { page--; renderPage(); } });
+        nextBtn.addEventListener('click', () => { if (page < current.chapters.length - 1) { page++; renderPage(); } });
+        document.getElementById('readerClose').addEventListener('click', closeBook);
+
+        // Klik area gelap di luar buku untuk menutup
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeBook(); });
+
+        // Keyboard: Esc menutup, panah kiri/kanan pindah bab
+        document.addEventListener('keydown', (e) => {
+            if (!overlay.classList.contains('open')) return;
+            if (e.key === 'Escape') closeBook();
+            if (e.key === 'ArrowRight' && !nextBtn.disabled) nextBtn.click();
+            if (e.key === 'ArrowLeft' && !prevBtn.disabled) prevBtn.click();
+        });
+    </script>
+
+</body>
+</html>
